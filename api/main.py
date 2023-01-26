@@ -15,8 +15,6 @@ def read_root():
 def extract_receipt(receipt: Receipt):
     MIN_URL_QUERY_LEN = 89
     url_parsed = urlparse(receipt.receipt_url)
-    print(url_parsed)
-    print(len(url_parsed.query))
     if not all([url_parsed.scheme,url_parsed.netloc, url_parsed.path, url_parsed.query]):
         raise HTTPException(status_code=400, detail=f'URL malformed')
     elif "fazenda.rj.gov.br" not in url_parsed.netloc:
