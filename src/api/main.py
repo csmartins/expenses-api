@@ -1,9 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from urllib.parse import urlparse
 
-from controlers.receipt import ReceiptControler
+from api.model.receipt import ReceiptBaseSchema
+from api.controlers.receipt import ReceiptControler
 from botocore.exceptions import ClientError
-from model.receipt import Receipt
 
 app = FastAPI()
 
@@ -11,10 +11,10 @@ app = FastAPI()
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/extract")
-def extract_receipt(receipt: Receipt):
+@app.post("/api/extract")
+def extract_receipt(receipt: ReceiptBaseSchema):
     MIN_URL_QUERY_LEN = 89
-    url_parsed = urlparse(receipt.receipt_url)
+    url_parsed = urlparse(receipt.url)
     if not all([url_parsed.scheme,url_parsed.netloc, url_parsed.path, url_parsed.query]):
         raise HTTPException(status_code=400, detail=f'URL malformed')
     elif "fazenda.rj.gov.br" not in url_parsed.netloc:
