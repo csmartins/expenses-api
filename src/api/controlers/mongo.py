@@ -20,3 +20,31 @@ class MongoService:
             return result
         except Exception as e:
             raise e
+    
+    def get_receipt(self, receipt_url):
+        try:
+            result = mongo.search_item(
+                uri=os.getenv("MONGODB_CONNSTRING"),
+                database=os.getenv("MONGODB_DATABASE"),
+                collection="receipts",
+                data={
+                    "url": receipt_url
+                }
+            )
+            return result
+        except Exception as e:
+            raise e
+    
+    def get_receipt_by_id(self, receipt_id):
+        try:
+            result = mongo.search_item(
+                uri=os.getenv("MONGODB_CONNSTRING"),
+                database=os.getenv("MONGODB_DATABASE"),
+                collection="receipts",
+                data={
+                    "_id": receipt_id
+                }
+            )
+            return result
+        except Exception as e:
+            raise e
