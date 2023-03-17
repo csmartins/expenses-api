@@ -1,0 +1,2 @@
+class ReceiptURLValidationError(Exception):
+    pass
