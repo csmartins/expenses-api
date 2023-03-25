@@ -31,7 +31,11 @@ class MongoService:
                     "url": receipt_url
                 }
             )
-            return result
+
+            result[0].pop("_id")
+            for product in result[0]["products"]:
+                product.pop("product_id")
+            return result[0]
         except Exception as e:
             raise e
     

@@ -1,9 +1,12 @@
-from fastapi import FastAPI, HTTPException
-from urllib.parse import urlparse
+from fastapi import FastAPI, HTTPException, Request
 
+from api.utils.receipt import validate_receipt_url
 from api.model.receipt import ReceiptBaseSchema
 from api.controlers.receipt import ReceiptControler
 from botocore.exceptions import ClientError
+from api.exceptions.receipt import ReceiptURLValidationError
+
+import logging
 
 app = FastAPI()
 
@@ -12,21 +15,27 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/api/extract")
+@app.post("/api/receipt")
 def extract_receipt(receipt: ReceiptBaseSchema):
-    MIN_URL_QUERY_LEN = 89
-    url_parsed = urlparse(receipt.url)
-    if not all([url_parsed.scheme,url_parsed.netloc, url_parsed.path, url_parsed.query]):
-        raise HTTPException(status_code=400, detail=f'URL malformed')
-    elif "fazenda.rj.gov.br" not in url_parsed.netloc:
-        raise HTTPException(status_code=400, detail=f'Not a accepted receipt regulator')
-    elif "/consultaNFCe/QRCode" not in url_parsed.path:
-        raise HTTPException(status_code=400, detail=f'Wrong receipt url path')
-    elif MIN_URL_QUERY_LEN < len(url_parsed.query):
-        raise HTTPException(status_code=400, detail=f'Wrong query parameters')
     try:
+        validate_receipt_url(receipt.url)
         receipt_controler = ReceiptControler()
         receipt_controler.send_receipt(receipt)
     except ClientError:
         raise HTTPException(status_code=500, detail=f'Failed to send message for extraction')
-    
+    except ReceiptURLValidationError as e:
+        raise HTTPException(status_code=400, detail=e.message)
     return receipt
+
+@app.get("/api/receipt/{receipt_url:path}")
+def get_receipts(req: Request):
+    try:
+        receipt_url = str(req.url).partition("/api/receipt/")[-1]
+        validate_receipt_url(receipt_url)
+        receipt_controler = ReceiptControler()
+        receipt = receipt_controler.get_receipt(receipt_url)
+        return receipt
+    except ClientError:
+        raise HTTPException(status_code=500, detail=f'Failed to send message for extraction')
+    except ReceiptURLValidationError as e:
+        raise HTTPException(status_code=400, detail=e.message)

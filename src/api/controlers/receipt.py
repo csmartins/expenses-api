@@ -15,3 +15,8 @@ class ReceiptControler:
         self.logger.info(f"receipt saved in mongo prior to extraction: {receipt_id}")
         sqs_service = SQSService()
         sqs_service.send_one_message(os.getenv("SQS_RECEIPTS_QUEUE_URL"), receipt.json())
+    
+    def get_receipt(self, receipt_data) -> ReceiptBaseSchema:
+        mongo_service = MongoService()
+        receipt = mongo_service.get_receipt(receipt_data)
+        return receipt
