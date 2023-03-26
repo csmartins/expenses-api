@@ -5,7 +5,7 @@ def validate_receipt_url(url):
     MIN_URL_QUERY_LEN = 89
     url_parsed = urlparse(url)
     if not all([url_parsed.scheme,url_parsed.netloc, url_parsed.path, url_parsed.query]):
-        raise ReceiptURLValidationError(f'URL malformed. Received: {url} parsed: {url_parsed}')
+        raise ReceiptURLValidationError(f'URL malformed. Received: {url}')
     elif "fazenda.rj.gov.br" not in url_parsed.netloc:
         raise ReceiptURLValidationError(f'Not a accepted receipt regulator: {url_parsed.netloc}')
     elif "/consultaNFCe/QRCode" not in url_parsed.path:
