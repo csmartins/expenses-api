@@ -20,3 +20,17 @@ class ReceiptControler:
         mongo_service = MongoService()
         receipt = mongo_service.get_receipt(receipt_data)
         return receipt
+    
+    def get_all_receipts(self):
+        mongo_service = MongoService()
+        receipts = mongo_service.get_all_receipts()
+
+        for receipt in receipts:
+            receipt.pop("_id")
+            print(receipt)
+            if "products" in receipt.keys():
+                for product in receipt["products"]:
+                    product.pop("product_id")
+        # print(receipts)
+        return receipts
+    

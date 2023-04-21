@@ -27,6 +27,19 @@ def extract_receipt(receipt: ReceiptBaseSchema):
         raise HTTPException(status_code=400, detail=e.message)
     return receipt
 
+@app.get("/api/receipts")
+def get_all_receipts():
+    try:
+        receipt_controler = ReceiptControler()
+        receipts = receipt_controler.get_all_receipts()
+
+        response = dict()
+        response["count"] = len(receipts)
+        response["receipts"] = receipts
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=e.message)
+
 @app.get("/api/receipt/{receipt_url:path}")
 def get_receipts(req: Request):
     try:
