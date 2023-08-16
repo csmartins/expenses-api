@@ -53,6 +53,20 @@ class MongoService:
         except Exception as e:
             raise e
     
+    def get_product_by_id(self, product_id):
+        try:
+            result = mongo.search_item(
+                uri=os.getenv("MONGODB_CONNSTRING"),
+                database=os.getenv("MONGODB_DATABASE"),
+                collection="products",
+                data={
+                    "_id": product_id
+                }
+            )
+            return result[0]
+        except Exception as e:
+            raise e
+    
     def get_all_receipts(self) -> list:
         try:
             result = mongo.search_item(

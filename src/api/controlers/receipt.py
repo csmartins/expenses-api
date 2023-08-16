@@ -27,10 +27,15 @@ class ReceiptControler:
 
         for receipt in receipts:
             receipt.pop("_id")
-            print(receipt)
+            # print(receipt)
             if "products" in receipt.keys():
                 for product in receipt["products"]:
+                    product_details = mongo_service.get_product_by_id(product["product_id"])
+                    # print(product_details)
+                    product_details.pop("_id")
                     product.pop("product_id")
+                    product["name"] = product_details["product_name"]
+                    product["type"] = product_details["product_type"]
         # print(receipts)
         return receipts
     
