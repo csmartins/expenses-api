@@ -7,6 +7,7 @@ def receiptEntity(receipt) -> dict:
         "payment": receipt["payment"],
         "datetime": receipt["datetime"],
         "products": receipt["products"],
+        "status": receipt["status"]
     }
 
 def receiptListEntity(receipts) -> list:

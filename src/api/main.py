@@ -6,8 +6,6 @@ from api.controlers.receipt import ReceiptControler
 from botocore.exceptions import ClientError
 from api.exceptions.receipt import ReceiptURLValidationError
 
-import logging
-
 app = FastAPI()
 
 @app.get("/")

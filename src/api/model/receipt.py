@@ -8,5 +8,10 @@ class ReceiptBaseSchema(BaseModel):
     store: Optional[str]
     total: Optional[float]
     payment: Optional[str]
-    datetime: Optional[datetime]
+    datetime: Optional[str]
     products: Optional[List[ReceiptProductSchema]]
+    status: str = "not started"
+
+    # @field_validator('total')
+    # @classmethod
+    # def float_must_be_comma_separated(cls, v: float)

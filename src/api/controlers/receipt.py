@@ -1,5 +1,5 @@
 from api.controlers.sqs import SQSService
-from api.model.receipt import ReceiptBaseSchema
+from api.model.receipt import ReceiptBaseSchema, ReceiptProductSchema
 from api.controlers.mongo import MongoService
 
 import logging
@@ -11,14 +11,15 @@ class ReceiptControler:
 
     def send_receipt(self, receipt: ReceiptBaseSchema):
         mongo_service = MongoService()
-        receipt_id = mongo_service.save_receipt(receipt_url=receipt.url)
+        receipt_id = mongo_service.save_receipt(receipt_url=receipt.url, extraction_status="not started")
         self.logger.info(f"receipt saved in mongo prior to extraction: {receipt_id}")
         sqs_service = SQSService()
         sqs_service.send_one_message(os.getenv("SQS_RECEIPTS_QUEUE_URL"), receipt.json())
     
     def get_receipt(self, receipt_data) -> ReceiptBaseSchema:
         mongo_service = MongoService()
-        receipt = mongo_service.get_receipt(receipt_data)
+        receipt_raw = mongo_service.get_receipt(receipt_data)
+        receipt = ReceiptBaseSchema.parse_obj(receipt_raw)
         return receipt
     
     def get_all_receipts(self):

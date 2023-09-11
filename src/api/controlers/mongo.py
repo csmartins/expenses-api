@@ -7,14 +7,15 @@ class MongoService:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
     
-    def save_receipt(self, receipt_url):
+    def save_receipt(self, receipt_url, extraction_status):
         try:
             result = mongo.safe_save(
                 uri=os.getenv("MONGODB_CONNSTRING"),
                 database=os.getenv("MONGODB_DATABASE"),
                 collection="receipts",
                 data={
-                    "url": receipt_url
+                    "url": receipt_url,
+                    "status": extraction_status
                 }
             )
             return result
@@ -35,6 +36,8 @@ class MongoService:
             result[0].pop("_id")
             for product in result[0]["products"]:
                 product.pop("product_id")
+            return result[0]
+        except KeyError as e:
             return result[0]
         except Exception as e:
             raise e

@@ -8,7 +8,7 @@ class MongoServiceTestCase(unittest.TestCase):
     @patch('mongo.mongo.safe_save')
     def test_save_receipt(self, mock_mongo):
         mongo_svc = MongoService()
-        mongo_svc.save_receipt("any.url")
+        mongo_svc.save_receipt("any.url", "blab")
 
         # mock_mongo.assert_called()
 
@@ -17,7 +17,8 @@ class MongoServiceTestCase(unittest.TestCase):
             database="",
             collection="receipts",
             data={
-                "url": "any.url"
+                "url": "any.url",
+                "status": "blab"
             }
         )
     
